@@ -1,8 +1,6 @@
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class HttpServer {
 
@@ -11,13 +9,31 @@ public class HttpServer {
         System.out.println("Listening for connection on port 8080....");
         while (true) {
             Socket client = server.accept();
-            InputStreamReader isr = new InputStreamReader(client.getInputStream());
-            BufferedReader reader = new BufferedReader(isr);
+
+            // Input
+            BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+
+            // Output
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+
             String line = reader.readLine();
-            while (!line.isEmpty()) {
+            while (!line.isEmpty() && line != null) {
                 System.out.println(line);
                 line = reader.readLine();
             }
+
+            // Basic HTTP response
+            String body = "<h1>Hello from my Java HTTP server!</h1>";
+            writer.write("HTTP/1.1 200 OK\r\n");
+            writer.write("Content-Type: text/html\r\n");
+            writer.write("Content-Length: " + body.length() + "\r\n");
+            writer.write("Connection: close\r\n");
+            writer.write("\r\n"); // End of headers
+            writer.write(body);
+            writer.flush();
+
+            // Close client connection
+            client.close();
         }
     }
 
