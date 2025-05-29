@@ -1,1 +1,27 @@
+# Maven build output
+/target/
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment & config
+.env
+*.swp
+*.bak
+
+# Java backup files
 *.class
+*.jar
