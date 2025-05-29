@@ -1,4 +1,4 @@
-package simplehttpserver;
+package project.simplehttpserver;
 
 import java.net.ServerSocket;
 import java.net.Socket;
