@@ -3,53 +3,36 @@ package project.simplehttpserver;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import project.simplehttpserver.config.Configuration;
 import project.simplehttpserver.config.ConfigurationManager;
+import project.simplehttpserver.core.ServerListenerThread;
 
 import java.io.*;
 
 public class HttpServer {
 
-    public static void main(String[] args0) throws Exception {
+    private final static Logger LOGGER = LoggerFactory.getLogger(HttpServer.class);
 
-        System.out.println("Server Starting...");
+    public static void main(String[] args) {
+
+        LOGGER.info("Server Starting...");
         ConfigurationManager.getInstance().loadConfigurationFile("src/main/resources/http.json");
         Configuration conf = ConfigurationManager.getInstance().getCurrentConfiguration();
 
-        System.out.println("Using Port: " + conf.getPort());
+        LOGGER.info("Using Port: " + conf.getPort());
 
-        System.out.println("Using WebRoot: " + conf.getWebroot());
+        LOGGER.info("Using WebRoot: " + conf.getWebroot());
 
         try {
-            final ServerSocket server = new ServerSocket(conf.getPort());
-            System.out.println("Listening for connection on port " + conf.getPort() + "....");
-            Socket client = server.accept();
-            // Input
-            InputStream inputStream = client.getInputStream();
-            // Output
-            OutputStream outputStream = client.getOutputStream();
-
-            String html = "<html><head><title>Http Server</title></head><body><h1>Hello World! (Server by Java http server)</h1></body></html>";
-
-            final String CRLF = "\n\r"; // 13, 10
-
-            // Status Line : HTTP VERSION RESPONSE_CODE RESPONSE_MESSAGE;
-            String response = "HTTP/1.1 200 OK" + CRLF +
-                    "Content-Length: " + html.getBytes().length + CRLF + // HEADER
-                    CRLF +
-                    html +
-                    CRLF + CRLF;
-
-            outputStream.write(response.getBytes());
-
-            inputStream.close();
-            outputStream.close();
-            client.close();
-            server.close();
-
+            ServerListenerThread serverListenerThread = new ServerListenerThread(conf.getPort(), conf.getWebroot());
+            serverListenerThread.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         // while (true) {
 
         // Basic HTTP response
