@@ -1,8 +1,5 @@
 package project.simplehttpserver;
 
-import java.net.ServerSocket;
-import java.net.Socket;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,21 +30,6 @@ public class HttpServer {
             e.printStackTrace();
         }
 
-        // while (true) {
-
-        // Basic HTTP response
-        // String body = "<h1>Hello from my Java HTTP server!</h1>";
-        // writer.write("HTTP/1.1 200 OK\r\n");
-        // writer.write("Content-Type: text/html\r\n");
-        // writer.write("Content-Length: " + body.length() + "\r\n");
-        // writer.write("Connection: close\r\n");
-        // writer.write("\r\n"); // End of headers
-        // writer.write(body);
-        // writer.flush();
-
-        // Close client connection
-
-        // }
     }
 
 }

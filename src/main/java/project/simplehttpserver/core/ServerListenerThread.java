@@ -1,8 +1,6 @@
 package project.simplehttpserver.core;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -33,32 +31,19 @@ public class ServerListenerThread extends Thread {
 
                 LOGGER.info("Connection accepted: " + client.getInetAddress());
 
-                // Input
-                InputStream inputStream = client.getInputStream();
-                // Output
-                OutputStream outputStream = client.getOutputStream();
-
-                String html = "<html><head><title>Http Server</title></head><body><h1>Hello World! (Server by Java http server)</h1></body></html>";
-
-                final String CRLF = "\n\r"; // 13, 10
-
-                // Status Line : HTTP VERSION RESPONSE_CODE RESPONSE_MESSAGE;
-                String response = "HTTP/1.1 200 OK" + CRLF +
-                        "Content-Length: " + html.getBytes().length + CRLF + // HEADER
-                        CRLF +
-                        html +
-                        CRLF + CRLF;
-
-                outputStream.write(response.getBytes());
-
-                inputStream.close();
-                outputStream.close();
-                client.close();
+                HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(client);
+                workerThread.start();
             }
-            // serverSocket.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Problem with setting socket", e);
+        } finally {
+            if (serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                }
+            }
         }
     }
 }
