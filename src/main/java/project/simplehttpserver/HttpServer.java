@@ -20,26 +20,39 @@ public class HttpServer {
 
         System.out.println("Using WebRoot: " + conf.getWebroot());
 
-        // final ServerSocket server = new ServerSocket(8080);
-        // System.out.println("Listening for connection on port 8080....");
+        try {
+            final ServerSocket server = new ServerSocket(conf.getPort());
+            System.out.println("Listening for connection on port " + conf.getPort() + "....");
+            Socket client = server.accept();
+            // Input
+            InputStream inputStream = client.getInputStream();
+            // Output
+            OutputStream outputStream = client.getOutputStream();
+
+            String html = "<html><head><title>Http Server</title></head><body><h1>Hello World! (Server by Java http server)</h1></body></html>";
+
+            final String CRLF = "\n\r"; // 13, 10
+
+            // Status Line : HTTP VERSION RESPONSE_CODE RESPONSE_MESSAGE;
+            String response = "HTTP/1.1 200 OK" + CRLF +
+                    "Content-Length: " + html.getBytes().length + CRLF + // HEADER
+                    CRLF +
+                    html +
+                    CRLF + CRLF;
+
+            outputStream.write(response.getBytes());
+
+            inputStream.close();
+            outputStream.close();
+            client.close();
+            server.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         // while (true) {
-        // Socket client = server.accept();
 
-        // // Input
-        // BufferedReader reader = new BufferedReader(new
-        // InputStreamReader(client.getInputStream()));
-
-        // // Output
-        // BufferedWriter writer = new BufferedWriter(new
-        // OutputStreamWriter(client.getOutputStream()));
-
-        // String line = reader.readLine();
-        // while (!line.isEmpty() && line != null) {
-        // System.out.println(line);
-        // line = reader.readLine();
-        // }
-
-        // // Basic HTTP response
+        // Basic HTTP response
         // String body = "<h1>Hello from my Java HTTP server!</h1>";
         // writer.write("HTTP/1.1 200 OK\r\n");
         // writer.write("Content-Type: text/html\r\n");
@@ -49,8 +62,8 @@ public class HttpServer {
         // writer.write(body);
         // writer.flush();
 
-        // // Close client connection
-        // client.close();
+        // Close client connection
+
         // }
     }
 
